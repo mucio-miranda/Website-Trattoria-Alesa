@@ -7,15 +7,16 @@ import { getTranslations } from "next-intl/server";
 type Props = {
   main: MenuPdfUrls;
   order?: MenuPdfUrls | null;
+  newYear?: MenuPdfUrls | null;
   /** Ocupa a altura útil da viewport (abaixo do header) para ver o máximo possível do PDF. */
   variant?: "full" | "card";
 };
 
-export async function MenuPdfEmbed({ main, order = null, variant = "full" }: Props) {
+export async function MenuPdfEmbed({ main, order = null, newYear = null, variant = "full" }: Props) {
   const t = await getTranslations("Menu");
 
   if (variant === "full") {
-    return <MenuPdfFullClient main={main} order={order} />;
+    return <MenuPdfFullClient main={main} order={order} newYear={newYear} />;
   }
 
   return (

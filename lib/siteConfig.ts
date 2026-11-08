@@ -35,9 +35,8 @@ function resolveGoogleDriveFileId(raw: string | undefined): string | null {
   return match?.[1] ?? null;
 }
 
-/** Public PDF on Drive: share "anyone with the link" as viewer, then set id or paste link in env. */
-export function getMenuDrivePdfEmbed() {
-  const id = resolveGoogleDriveFileId(process.env.NEXT_PUBLIC_MENU_DRIVE_FILE_ID);
+function buildDrivePdfEmbed(raw: string | undefined) {
+  const id = resolveGoogleDriveFileId(raw);
   if (!id) return null;
   return {
     previewUrl: `https://drive.google.com/file/d/${id}/preview`,
@@ -45,14 +44,19 @@ export function getMenuDrivePdfEmbed() {
   };
 }
 
+/** Public PDF on Drive: share "anyone with the link" as viewer, then set id or paste link in env. */
+export function getMenuDrivePdfEmbed() {
+  return buildDrivePdfEmbed(process.env.NEXT_PUBLIC_MENU_DRIVE_FILE_ID);
+}
+
 /** Second menu PDF (e.g. takeaway / orders). Same sharing rules as the main menu. */
 export function getMenuOrderDrivePdfEmbed() {
-  const id = resolveGoogleDriveFileId(process.env.NEXT_PUBLIC_MENU_ORDER_DRIVE_FILE_ID);
-  if (!id) return null;
-  return {
-    previewUrl: `https://drive.google.com/file/d/${id}/preview`,
-    viewUrl: `https://drive.google.com/file/d/${id}/view`,
-  };
+  return buildDrivePdfEmbed(process.env.NEXT_PUBLIC_MENU_ORDER_DRIVE_FILE_ID);
+}
+
+/** Optional seasonal New Year's Eve (Silvester) menu PDF. Leave unset to hide the tab. */
+export function getMenuNewYearDrivePdfEmbed() {
+  return buildDrivePdfEmbed(process.env.NEXT_PUBLIC_MENU_NYE_DRIVE_FILE_ID);
 }
 
 export function buildWhatsAppUrl(prefilledMessage: string) {

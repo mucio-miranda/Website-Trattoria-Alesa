@@ -125,8 +125,10 @@
     "title": "Speisekarte",
     "pdfFrameTitle": "Speisekarte (PDF)",
     "pdfFrameTitleOrders": "PDF Speisekarte zum Mitnehmen / Bestellen",
+    "pdfFrameTitleNewYear": "PDF Silvestermenü",
     "menuTabMain": "Im Restaurant",
     "menuTabTakeaway": "Zum Mitnehmen",
+    "menuTabNewYear": "Silvester",
     "openInNewTab": "In neuem Tab öffnen",
     "loadingPdf": "Speisekarte wird geladen...",
     "pdfMissing": "Das Menü-PDF ist noch nicht verknüpft. Bitte schauen Sie später wieder vorbei."

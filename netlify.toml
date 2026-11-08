@@ -7,6 +7,7 @@
 # Menu PDFs (Google Drive):
 #   NEXT_PUBLIC_MENU_DRIVE_FILE_ID — main menu (required for /menu PDF embed).
 #   NEXT_PUBLIC_MENU_ORDER_DRIVE_FILE_ID — optional second menu (e.g. takeaway); same link rules.
+#   NEXT_PUBLIC_MENU_NYE_DRIVE_FILE_ID — optional New Year's Eve (Silvester) menu; remove to hide the tab.
 #   Value: file id only, or full share URL. PDF must be "Anyone with the link" (Viewer).
 #
 # Optional: NEXT_PUBLIC_WHATSAPP_E164, NEXT_PUBLIC_INSTAGRAM_URL (see .env.example).

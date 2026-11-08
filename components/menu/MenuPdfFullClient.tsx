@@ -5,38 +5,58 @@ import { Button } from "@/components/ui/Button";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export type MenuPdfUrls = {
   previewUrl: string;
   viewUrl: string;
 };
 
-type ActiveTab = "main" | "order";
+type TabId = "main" | "order" | "newYear";
+
+type Tab = {
+  id: TabId;
+  urls: MenuPdfUrls;
+  labelKey: "menuTabMain" | "menuTabTakeaway" | "menuTabNewYear";
+  frameTitleKey: "pdfFrameTitle" | "pdfFrameTitleOrders" | "pdfFrameTitleNewYear";
+};
 
 type Props = {
   main: MenuPdfUrls;
   order: MenuPdfUrls | null;
+  newYear?: MenuPdfUrls | null;
 };
 
-export function MenuPdfFullClient({ main, order }: Props) {
+export function MenuPdfFullClient({ main, order, newYear = null }: Props) {
   const t = useTranslations("Menu");
   const reduceMotion = useReducedMotion();
-  const [active, setActive] = useState<ActiveTab>("main");
-  const [mainLoaded, setMainLoaded] = useState(false);
-  const [orderLoaded, setOrderLoaded] = useState(false);
+  const [active, setActive] = useState<TabId>("main");
+  const [loaded, setLoaded] = useState<Partial<Record<TabId, boolean>>>({});
 
-  const hasOrder = Boolean(order);
-  const showingOrder = active === "order" && hasOrder;
-  const current = showingOrder && order ? order : main;
+  const tabs: Tab[] = [
+    { id: "main", urls: main, labelKey: "menuTabMain", frameTitleKey: "pdfFrameTitle" },
+  ];
+  if (order) {
+    tabs.push({
+      id: "order",
+      urls: order,
+      labelKey: "menuTabTakeaway",
+      frameTitleKey: "pdfFrameTitleOrders",
+    });
+  }
+  if (newYear) {
+    tabs.push({
+      id: "newYear",
+      urls: newYear,
+      labelKey: "menuTabNewYear",
+      frameTitleKey: "pdfFrameTitleNewYear",
+    });
+  }
 
-  useEffect(() => {
-    if (!hasOrder && active === "order") {
-      setActive("main");
-    }
-  }, [active, hasOrder]);
+  // Falls back to the main menu if the active tab disappears (e.g. env var removed).
+  const current = tabs.find((tab) => tab.id === active) ?? tabs[0];
 
-  const loadingActive = showingOrder ? !orderLoaded : !mainLoaded;
+  const loadingActive = !loaded[current.id];
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -82,49 +102,35 @@ export function MenuPdfFullClient({ main, order }: Props) {
           </div>
         ) : null}
 
-        <iframe
-          title={t("pdfFrameTitle")}
-          src={main.previewUrl}
-          className={`absolute inset-0 h-full w-full border-0 ${showingOrder ? "hidden" : "block"}`}
-          allow="fullscreen"
-          loading="eager"
-          onLoad={() => setMainLoaded(true)}
-        />
-
-        {order ? (
+        {tabs.map((tab) => (
           <iframe
-            title={t("pdfFrameTitleOrders")}
-            src={order.previewUrl}
-            className={`absolute inset-0 h-full w-full border-0 ${showingOrder ? "block" : "hidden"}`}
+            key={tab.id}
+            title={t(tab.frameTitleKey)}
+            src={tab.urls.previewUrl}
+            className={`absolute inset-0 h-full w-full border-0 ${tab.id === current.id ? "block" : "hidden"}`}
             allow="fullscreen"
             loading="eager"
-            onLoad={() => setOrderLoaded(true)}
+            onLoad={() => setLoaded((prev) => ({ ...prev, [tab.id]: true }))}
           />
-        ) : null}
+        ))}
       </div>
 
       <div className="flex shrink-0 flex-wrap items-center justify-center gap-3 border-t border-stone-200/90 px-4 py-3 sm:gap-4 sm:py-4">
-        {hasOrder ? (
-          <>
-            <Button
-              type="button"
-              variant={!showingOrder ? "primary" : "secondary"}
-              onClick={() => setActive("main")}
-            >
-              {t("menuTabMain")}
-            </Button>
-            <Button
-              type="button"
-              variant={showingOrder ? "primary" : "secondary"}
-              onClick={() => setActive("order")}
-            >
-              {t("menuTabTakeaway")}
-            </Button>
-          </>
-        ) : null}
+        {tabs.length > 1
+          ? tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                type="button"
+                variant={tab.id === current.id ? "primary" : "secondary"}
+                onClick={() => setActive(tab.id)}
+              >
+                {t(tab.labelKey)}
+              </Button>
+            ))
+          : null}
 
         <Button
-          externalHref={current.viewUrl}
+          externalHref={current.urls.viewUrl}
           variant="secondary"
           target="_blank"
           rel="noopener noreferrer"

@@ -125,8 +125,10 @@
     "title": "Menu",
     "pdfFrameTitle": "Menu PDF",
     "pdfFrameTitleOrders": "PDF menu ordini da asporto",
+    "pdfFrameTitleNewYear": "PDF menu di Capodanno",
     "menuTabMain": "Menu in sala",
     "menuTabTakeaway": "Menu da asporto",
+    "menuTabNewYear": "Capodanno",
     "openInNewTab": "Apri in nuova scheda",
     "loadingPdf": "Caricamento menu in corso...",
     "pdfMissing": "Il PDF del menu non è ancora collegato. Torna a trovarci tra poco."
